@@ -24,6 +24,8 @@ public class Lista {
 
     // 2 - Escreva um metodo que copie uma lista encadeada para um vetor
     public int[] listaParaVetor() {
+        this.erroSeVazia();
+
         int[] vetor = new int[tamanho];
         Nodo aux = head.prox;
         int i = 0;
@@ -38,6 +40,8 @@ public class Lista {
 
     // 3 - Faça um metodo para concatenar duas listas
     public Lista concatenarListas(Lista lista2) {
+        lista2.erroSeVazia();
+
         Lista c = new Lista();
         Nodo aux = head.prox;
         Nodo aux2 = lista2.getHead().prox;
@@ -65,9 +69,8 @@ public class Lista {
 
     // 4 - Faça um metodo para remover os n primeiros elementos de uma lista, retornar se é possível ou não
     public void removerElementos(int n) {
-        if (vazia()) {
-            return;
-        }
+        this.erroSeVazia();
+
         for (int i = 0; i < n; i++) {
             Nodo aux = head;
             if (aux.prox == null) {
@@ -85,9 +88,8 @@ public class Lista {
 
     // 5 - Faça um metodo para buscar a posição e o valor do maior elemento da lista, retornar se possível ou não
     public void maiorElemento() {
-        if (vazia()) {
-            return;
-        }
+        this.erroSeVazia();
+
         Nodo aux = head.prox;
         int contMaior = 0, pos = 1, posMaior = 1;
         int maior = (int) aux.item;
@@ -114,32 +116,41 @@ public class Lista {
     }
 
     // 6 - Faça um metodo para trocar de posição dois elementos de uma lista, retornar se possivel ou não
-    public void trocarElementos(int primeiro, int segundo) {
-        Nodo aux = head.prox;
-        int pos = 0;
-        Nodo primeiroItem = null, segundoItem = null;
+    public void trocarElementos(Nodo N1, Nodo N2) {
+        this.erroSeVazia();
 
-        while (aux != null && (primeiroItem == null || segundoItem == null)) {
-            pos++;
-            if (pos == primeiro) {
-                primeiroItem = aux;
+        Nodo ant1 = null;
+        Nodo prox1 = N1.prox;
+        Nodo ant2 = null;
+        Nodo prox2 = N2.prox;
+
+        Nodo aux = this.head;
+
+        while (aux != null) {
+            if (aux.prox == N1) {
+                ant1 = aux;
             }
-            if (pos == segundo) {
-                segundoItem = aux;
+            if (aux.prox == N2) {
+                ant2 = aux;
             }
             aux = aux.prox;
         }
-        if (primeiroItem != null && segundoItem != null) {
-            Object temp = primeiroItem.item;
-            primeiroItem.item = segundoItem.item;
-            segundoItem.item = temp;
-        } else {
-            System.out.println("Posição inexistente!");
+
+        if (ant1 == null || ant2 == null) {
+            throw new RuntimeException("Não encontrados!");
         }
+
+        ant1.prox = N2;
+        ant2.prox = N1;
+
+        N1.prox = prox2;
+        N2.prox = prox1;
     }
 
     // 7 - Considere uma lista contendo numeros positivos, retorne uma nova lista apenas com os pares
     public Lista listaComPares() {
+        this.erroSeVazia();
+
         Lista l = new Lista();
         Nodo aux = head.prox;
 
@@ -158,6 +169,8 @@ public class Lista {
 
     // 8 - Considere uma lista contendo numeros positivos, retorne a media da lista
     public int mediaDaLista() {
+        this.erroSeVazia();
+
         int soma = 0, qntdElementos = 0;
         Nodo aux = head.prox;
 
@@ -171,6 +184,8 @@ public class Lista {
 
     // 9 - Faça um metodo pra verificar se uma lista está ordenada(crescente ou descrescente)
     public void listaOrdenada() {
+        this.erroSeVazia();
+
         Nodo aux = head.prox;
         boolean crescente = true, decrescente = true;
 
@@ -195,6 +210,7 @@ public class Lista {
 
     // 10 - Faça um metodo que copia uma lista L1 em outra lista L2
     public Lista copiarLista(Lista l1) {
+        l1.erroSeVazia();
 
         Lista l2 = new Lista();
         Nodo aux = l1.head.prox;
@@ -213,6 +229,8 @@ public class Lista {
 
     // 11 - Fazer um metodo que copia elementos L1 para L2, removendo repetidos
     public Lista removeRepetidos() {
+        this.erroSeVazia();
+
         Lista l = new Lista();
         Nodo auxL = head.prox;
 
@@ -248,6 +266,8 @@ public class Lista {
 
     // 12 - Fazer um metodo para inverter uma lista L1 colocando resultado em L2
     public Lista inverterLista() {
+        this.erroSeVazia();
+
         Lista l = new Lista();
         Nodo aux = head.prox;
 
@@ -267,6 +287,8 @@ public class Lista {
 
     // 16 - Escreva um metodo que inverte a ordem das células de uma lista encadeada, altere os ponteiros
     public void inverteNodos() {
+        this.erroSeVazia();
+
         Nodo anterior = null;
         Nodo atual = head.prox;
 
@@ -468,7 +490,6 @@ public class Lista {
         }
     }
 
-
     // Metodos auxiliares
     public boolean contem(Object item) {
         Nodo aux = head.prox;
@@ -489,12 +510,15 @@ public class Lista {
         ultimo = novo;
     }
     public boolean vazia() {
-        return ultimo == null;
+        return ultimo != null;
+    }
+    public void erroSeVazia() {
+        if(this.vazia()) {throw new RuntimeException("Lista vazia");};
     }
     public void imprimeLista() {
         Nodo aux = head.prox;
         while (aux != null) {
-            System.out.print(aux.item);
+            System.out.print(aux.item + " ");
             aux = aux.prox;
         }
     }
