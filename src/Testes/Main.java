@@ -1,25 +1,25 @@
 package Testes;
 
 import Exercicios.Lista;
-import Exercicios.Nodo;
 
 public class Main {
     public static void main(String[] args) {
-        int vetor[] = {14, 56, 12, 24};
-        int vetor2[] = {25, 45, 32, 12};
-        Lista lista = new Lista();
-        Lista lista2 = new Lista();
+        String[] vetorStr = {"Abacaxi", "Banana", "Maçã", "Apple"};
+        String[] vetorStr2 = {"Caxi", "Nana", "Çã", "Pou"};
+        Integer[] vetorInt = {56, 67, 67, 89, 21};
+        Integer[] vetorInt2 = {28, 56, 67, 23, 14};
 
-        // ex6 -
-        lista.criaListaEncadeada(vetor);
-        lista.imprimeLista();
+        Lista<String> listaStr = new Lista<>();
+        Lista<String> listaStr2 = new Lista<>();
+        Lista<Integer> listaInt = new Lista<>();
+        Lista<Integer> listaInt2 = new Lista<>();
 
-        System.out.println();
+        listaStr.criaListaEncadeada(vetorStr);
+        listaStr2.criaListaEncadeada(vetorStr2);
+        listaInt.criaListaEncadeada(vetorInt);
+        listaInt2.criaListaEncadeada(vetorInt2);
 
-        Nodo primeiro = lista.getHead().prox;
-        Nodo segundo = lista.getHead().prox.prox.prox;
-
-        lista.trocarElementos(primeiro, segundo);
-        lista.imprimeLista();
+        // 7 -
+        listaInt.maiorElemento();
     }
 }

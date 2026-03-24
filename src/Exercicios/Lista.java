@@ -1,37 +1,33 @@
 package Exercicios;
 
-public class Lista {
-    private final Nodo head;
-    private Nodo ultimo;
+public class Lista<T> {
+    private Nodo<T> head;
+    private Nodo<T> ultimo;
     private int tamanho = 0;
 
-    public Lista () {
-        head = new Nodo();
-        ultimo = head;
-        head.prox = null;
+    public Lista() {
+        this.head = null;
+        this.ultimo = null;
     }
 
     // 1 - Escreva um metodo que crie uma lista encadeada a partir de um vetor
-    public void criaListaEncadeada(int[] vetor) {
-        for (int item : vetor) {
-            Nodo novo = new Nodo();
-            novo.item = item;
-            ultimo.prox = novo;
-            ultimo = novo;
+    public void criaListaEncadeada(T[] vetor) {
+        for (T item : vetor) {
+            this.inserirFim(item);
         }
-        tamanho = vetor.length;
     }
 
     // 2 - Escreva um metodo que copie uma lista encadeada para um vetor
-    public int[] listaParaVetor() {
+    public Object[] listaParaVetor() {
         this.erroSeVazia();
 
-        int[] vetor = new int[tamanho];
-        Nodo aux = head.prox;
+        Object[] vetor = new Object[tamanho];
+
+        Nodo<T> aux = head;
         int i = 0;
 
         while (aux != null) {
-            vetor[i] = (int) aux.item;
+            vetor[i] = aux.item;
             aux = aux.prox;
             i++;
         }
@@ -39,29 +35,19 @@ public class Lista {
     }
 
     // 3 - Faça um metodo para concatenar duas listas
-    public Lista concatenarListas(Lista lista2) {
+    public Lista<T> concatenarListas(Lista<T> lista2) {
         lista2.erroSeVazia();
 
-        Lista c = new Lista();
-        Nodo aux = head.prox;
-        Nodo aux2 = lista2.getHead().prox;
+        Lista<T> c = new Lista<>();
+        Nodo<T> aux = this.head;
+        Nodo<T> aux2 = lista2.getHead();
 
         while (aux != null) {
-            Nodo novo = new Nodo();
-            novo.item = aux.item;
-
-            c.setTamanho(c.getTamanho() + 1);
-            c.getUltimo().prox = novo;
-            c.setUltimo(novo);
+            c.inserirFim(aux.item);
             aux = aux.prox;
         }
         while (aux2 != null) {
-            Nodo novo = new Nodo();
-            novo.item = aux2.item;
-
-            c.setTamanho(c.getTamanho() + 1);
-            c.getUltimo().prox = novo;
-            c.setUltimo(novo);
+            c.inserirFim(aux2.item);
             aux2 = aux2.prox;
         }
         return c;
@@ -71,18 +57,15 @@ public class Lista {
     public void removerElementos(int n) {
         this.erroSeVazia();
 
-        for (int i = 0; i < n; i++) {
-            Nodo aux = head;
-            if (aux.prox == null) {
-                System.out.println("Não existem n elementos!");
-                return;
-            }
-            Nodo q = aux.prox;
-            aux.prox = q.prox;
-            if (aux.prox == null ) {
-                ultimo = aux;
-            }
+        if (n > this.tamanho) {
+            System.out.println("Não existem N elementos");
+            return;
         }
+
+        for (int i = 0; i < n; i++) {
+            this.head = this.head.prox;
+        }
+
         System.out.println(n + " elementos removidos!");
     }
 
@@ -90,13 +73,13 @@ public class Lista {
     public void maiorElemento() {
         this.erroSeVazia();
 
-        Nodo aux = head.prox;
-        int contMaior = 0, pos = 1, posMaior = 1;
-        int maior = (int) aux.item;
+        Nodo<T> aux = head;
+        int contMaior = 0;
+        int pos = 1;
+        int posMaior = 1;
+        int maior = 0;
 
         while (aux.prox != null) {
-            pos++;
-            aux = aux.prox;
             if ((int) aux.item > maior) {
                 maior = (int) aux.item;
                 contMaior = 1;
@@ -105,6 +88,8 @@ public class Lista {
             else if ((int) aux.item == maior) {
                 contMaior++;
             }
+            pos++;
+            aux = aux.prox;
         }
 
         if (contMaior > 1){
@@ -116,15 +101,32 @@ public class Lista {
     }
 
     // 6 - Faça um metodo para trocar de posição dois elementos de uma lista, retornar se possivel ou não
-    public void trocarElementos(Nodo N1, Nodo N2) {
-        this.erroSeVazia();
+    public void trocarElementos(T item1, T item2) {
 
-        Nodo ant1 = null;
-        Nodo prox1 = N1.prox;
-        Nodo ant2 = null;
-        Nodo prox2 = N2.prox;
+        Nodo<T> aux = this.head;
+        Nodo<T> N1 = null;
+        Nodo<T> N2 = null;
 
-        Nodo aux = this.head;
+        while (aux != null) {
+            if (item1.equals(aux.item)) {
+                N1 = aux;
+            }
+            else if (item2.equals(aux.item)) {
+                N2 = aux;
+            }
+            aux = aux.prox;
+        }
+
+        if (N1 == null || N2 == null) {
+            throw new RuntimeException("Não encontrados!");
+        }
+
+        Nodo<T> ant1 = null;
+        Nodo<T> prox1 = N1.prox;
+        Nodo<T> ant2 = null;
+        Nodo<T> prox2 = N2.prox;
+
+        aux = this.head;
 
         while (aux != null) {
             if (aux.prox == N1) {
@@ -136,31 +138,56 @@ public class Lista {
             aux = aux.prox;
         }
 
-        if (ant1 == null || ant2 == null) {
-            throw new RuntimeException("Não encontrados!");
+        // Casos
+        if (N1.prox == N2) {
+            if (ant1 != null) {
+                ant1.prox = N2;
+            } else {
+                head = N2;
+            }
+            N1.prox = N2.prox;
+            N2.prox = N1;
         }
+        else if (N2.prox == N1) {
+            if (ant2 != null) {
+                ant2.prox = N1;
+            }
+            else {
+                head = N1;
+            }
+            N2.prox = N1.prox;
+            N1.prox = N2;
+        }
+        else {
+            if (ant1 != null) {
+                ant1.prox = N2;
+            }
+            else {
+                head = N2;
+            }
 
-        ant1.prox = N2;
-        ant2.prox = N1;
+            if (ant2 != null) {
+                ant2.prox = N1;
+            }
+            else {
+                head = N1;
+            }
 
-        N1.prox = prox2;
-        N2.prox = prox1;
+            N1.prox = prox2;
+            N2.prox = prox1;
+        }
     }
 
     // 7 - Considere uma lista contendo numeros positivos, retorne uma nova lista apenas com os pares
-    public Lista listaComPares() {
+    public Lista<T> listaComPares() {
         this.erroSeVazia();
 
-        Lista l = new Lista();
-        Nodo aux = head.prox;
+        Lista<T> l = new Lista<>();
+        Nodo<T> aux = head;
 
         while(aux != null) {
             if ((int) aux.item % 2 == 0) {
-                Nodo novo = new Nodo();
-                novo.item = aux.item;
-                l.setTamanho(l.getTamanho() + 1);
-                l.getUltimo().prox = novo;
-                l.setUltimo(novo);
+                l.inserirFim(aux.item);
             }
             aux = aux.prox;
         }
@@ -216,8 +243,7 @@ public class Lista {
         Nodo aux = l1.head.prox;
 
         while (aux != null) {
-            Nodo novo = new Nodo();
-            novo.item = aux.item;
+            Nodo novo = new Nodo(aux.item);
 
             l2.setTamanho(l2.getTamanho() + 1);
             l2.getUltimo().prox = novo;
@@ -235,8 +261,7 @@ public class Lista {
         Nodo auxL = head.prox;
 
         while (auxL != null) {
-            Nodo novo = new Nodo();
-            novo.item = auxL.item;
+            Nodo novo = new Nodo(auxL.item);
 
             l.setTamanho(l.getTamanho() + 1);
             l.getUltimo().prox = novo;
@@ -272,8 +297,7 @@ public class Lista {
         Nodo aux = head.prox;
 
         while (aux != null) {
-            Nodo novo = new Nodo();
-            novo.item = aux.item;
+            Nodo novo = new Nodo(aux.item);
             l.setTamanho(l.getTamanho() + 1);
             novo.prox = l.getHead().prox;
             l.getHead().prox = novo;
@@ -308,8 +332,7 @@ public class Lista {
         Nodo aux = l1.head.prox;
 
         while (aux != null) {
-            Nodo novo = new Nodo();
-            novo.item = aux.item;
+            Nodo novo = new Nodo(aux.item);
             l3.setTamanho(l3.getTamanho() + 1);
             l3.getUltimo().prox = novo;
             l3.setUltimo(novo);
@@ -319,8 +342,7 @@ public class Lista {
         Nodo aux2 = l2.getHead().prox;
 
         while (aux2 != null) {
-            Nodo novo = new Nodo();
-            novo.item = aux2.item;
+            Nodo novo = new Nodo(aux2.item);
             if (!l3.contem(novo.item)) {
                 l3.setTamanho(l3.getTamanho() + 1);
                 l3.getUltimo().prox = novo;
@@ -370,8 +392,7 @@ public class Lista {
         char[] chars = str.toCharArray();
 
         for (char c : chars) {
-            Nodo novo = new Nodo();
-            novo.item = c;
+            Nodo novo = new Nodo(c);
             tamanho++;
             this.ultimo.prox = novo;
             this.ultimo = novo;
@@ -492,7 +513,7 @@ public class Lista {
 
     // Metodos auxiliares
     public boolean contem(Object item) {
-        Nodo aux = head.prox;
+        Nodo<T> aux = head.prox;
         while (aux != null) {
             if (item.equals(aux.item)) {
                 return true;
@@ -501,40 +522,56 @@ public class Lista {
         }
         return false;
     }
-    public void inserirFim(Object item) {
-        Nodo novo = new Nodo();
-        novo.item = item;
 
-        tamanho++;
-        ultimo.prox = novo;
-        ultimo = novo;
+    public void inserirFim(T item) {
+
+        Nodo<T> novo = new Nodo<T>(item);
+
+        if (this.head == null) {
+            this.head = novo;
+            this.ultimo = this.head;
+        }
+        else {
+            this.ultimo.prox = novo;
+            this.ultimo = novo;
+        }
+        this.tamanho++;
     }
+
     public boolean vazia() {
-        return ultimo != null;
+        return ultimo == null;
     }
+
     public void erroSeVazia() {
         if(this.vazia()) {throw new RuntimeException("Lista vazia");};
     }
+
     public void imprimeLista() {
-        Nodo aux = head.prox;
+
+        Nodo<T> aux = head;
+
         while (aux != null) {
             System.out.print(aux.item + " ");
             aux = aux.prox;
         }
     }
+
     public int getTamanho() {
         return tamanho;
     }
-    public Nodo getHead() {
+    public Nodo<T> getHead() {
         return head;
     }
-    public Nodo getUltimo() {
+    public Nodo<T> getUltimo() {
         return ultimo;
     }
     public void setTamanho(int tamanho) {
         this.tamanho = tamanho;
     }
-    public void setUltimo(Nodo ultimo) {
+    public void setHead(Nodo<T> head) {
+        this.head = head;
+    }
+    public void setUltimo(Nodo<T> ultimo) {
         this.ultimo = ultimo;
     }
 }

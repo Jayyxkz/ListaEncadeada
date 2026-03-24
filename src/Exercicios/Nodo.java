@@ -1,6 +1,10 @@
 package Exercicios;
 
-public class Nodo {
-    public Object item;
-    public Nodo prox;
+public class Nodo<T> {
+    T item;
+    Nodo<T> prox;
+
+    public Nodo(T item) {
+        this.item = item;
+    }
 }
